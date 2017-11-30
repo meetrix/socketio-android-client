@@ -42,7 +42,11 @@ public class LoginActivity extends Activity {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    try {
+                        attemptLogin();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     return true;
                 }
                 return false;
@@ -53,7 +57,11 @@ public class LoginActivity extends Activity {
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
+                try {
+                    attemptLogin();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -72,7 +80,7 @@ public class LoginActivity extends Activity {
      * If there are form errors (invalid username, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
-    private void attemptLogin() {
+    private void attemptLogin() throws JSONException {
         // Reset errors.
         mUsernameView.setError(null);
 
@@ -89,9 +97,13 @@ public class LoginActivity extends Activity {
         }
 
         mUsername = username;
+        String room = "test";
+        JSONObject user = new JSONObject();
+        user.put("username", username);
+        user.put("room", room);
 
         // perform the user login attempt.
-        mSocket.emit("add user", username);
+        mSocket.emit("joinroom", user);
     }
 
     private Emitter.Listener onLogin = new Emitter.Listener() {

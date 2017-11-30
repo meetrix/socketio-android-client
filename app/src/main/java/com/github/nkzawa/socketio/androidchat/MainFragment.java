@@ -88,7 +88,8 @@ public class MainFragment extends Fragment {
         mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
         mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectError);
         mSocket.on("new message", onNewMessage);
-        mSocket.on("user joined", onUserJoined);
+        mSocket.on("onclick", onNewClick);
+        mSocket.on("userjoin", onUserJoined);
         mSocket.on("user left", onUserLeft);
         mSocket.on("typing", onTyping);
         mSocket.on("stop typing", onStopTyping);
@@ -358,11 +359,13 @@ public class MainFragment extends Fragment {
                 @Override
                 public void run() {
                     JSONObject data = (JSONObject) args[0];
-                    String username;
+                    String username, msg;
                     int numUsers;
                     try {
-                        username = data.getString("username");
+                        username = data.getString("users");
+                        //msg = data.getString("msg");
                         numUsers = data.getInt("numUsers");
+                        Log.d("JoinUser: ", String.valueOf(data));
                     } catch (JSONException e) {
                         Log.e(TAG, e.getMessage());
                         return;
@@ -370,6 +373,31 @@ public class MainFragment extends Fragment {
 
                     addLog(getResources().getString(R.string.message_user_joined, username));
                     addParticipantsLog(numUsers);
+                }
+            });
+        }
+    };
+
+    //add on click========================================================================================
+    private Emitter.Listener onNewClick = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    JSONObject data = (JSONObject) args[0];
+                    String username, room;
+                    int numUsers;
+                    try {
+                        username = data.getString("username");
+                        //room = data.getString("room");
+                        Log.d("ClickUser: ", String.valueOf(data));
+                    } catch (JSONException e) {
+                        Log.e(TAG, e.getMessage());
+                        return;
+                    }
+
+                  //  addLog(getResources().getString(R.string.message_user_joined, username));
                 }
             });
         }
